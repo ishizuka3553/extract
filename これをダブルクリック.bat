@@ -1,0 +1,3 @@
+python extract.py
+
+pause

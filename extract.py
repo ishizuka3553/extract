@@ -3,6 +3,9 @@ import time
 import datetime
 import csv
 
+# ダミー日付を現在日付の1年後に設定
+dummy_date = datetime.datetime.now() + datetime.timedelta(days=365)
+
 def parse_docx_tables(docx_path):
     doc = docx.Document(docx_path)
     result = []
@@ -27,20 +30,21 @@ def parse_docx_tables(docx_path):
                     except ValueError:
                         print(f"エラーが発生しました。区域番号 {no} の日付 {value} が間違っています。")
                         date = None
-                elif col % 2 == 1 and tbl.cell(row, col - 1).text.strip() != "":
-                    date = datetime.datetime.strptime('30/1/1', '%y/%m/%d')
+                elif col % 2 == 1 and tbl.cell(row, col - 1).text.strip() != "":        
+                    date = dummy_date
             if date is not None:
                 result.append([no, date])
     return result
 
 def write_results_to_csv(results, output_path):
     sorted_result = sorted(results, key=lambda x: x[1])
+    dummy_date_str = dummy_date.strftime("%y/%m/%d")
     with open(output_path, 'w', encoding='utf-8', newline='') as f:
         writer = csv.writer(f, lineterminator="\n")
         for row in sorted_result:
             n = row[0]
             d = row[1].strftime("%y/%m/%d")
-            if d == "30/01/01":
+            if d == dummy_date_str:
                 writer.writerow([n, '未返却'])
             else:
                 writer.writerow([n, d])
