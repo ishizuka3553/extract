@@ -1,32 +1,6 @@
 import docx
 import time
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
-
-def _no_wrap(text: str) -> str:
-    if text is None:
-        return ""
-    return text.replace(" ", "\u00A0")
-
-def _fit_text(text: str, tbl, row_idx: int, col_idx: int, font_size: int = 11) -> str:
-    if text is None:
-        return ""
-    # remove newlines and convert spaces to non-breaking
-    t = _no_wrap(text.replace("\n", " "))
-    try:
-        col = tbl.columns[col_idx]
-        width_emu = getattr(col, 'width', None)
-        if width_emu and width_emu > 0:
-            width_pt = width_emu / 12700.0
-            avg_char_pt = max(1.0, font_size * 0.5)
-            max_chars = max(1, int(width_pt / avg_char_pt))
-        else:
-            max_chars = 30
-    except Exception:
-        max_chars = 30
-    if len(t) <= max_chars:
-        return t
-    return t[:max_chars]
 
 def parse_docx_tables(docx_path):
     doc = docx.Document(docx_path)
@@ -54,17 +28,20 @@ def last_date(tbl, row):
             name = tbl.cell(row - 1, last_col).text
             break
     if last_col % 2 == 0:
-        tbl.cell(row - 1, 2).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
-        tbl.cell(row - 1, 2).vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
         tbl.cell(row - 1, 2).text = name
+        # TODO アラインメントがおかしい
+        tbl.cell(row - 1, 2).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT 
         tbl.cell(row, 2).text = tbl.cell(row, last_col).text
+        tbl.cell(row, 2).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
         tbl.cell(row - 1, 1).text = tbl.cell(row, last_col - 1).text
+        tbl.cell(row - 1, 1).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
         for col in range(3, last_col + 1):
             if col % 2 == 0:
                 tbl.cell(row - 1, col).text = ""
             tbl.cell(row, col).text = ""
     else:
-        tbl.cell(row, 1).text = tbl.cell(row, last_col).text
+        tbl.cell(row - 1, 1).text = tbl.cell(row, last_col).text
+        tbl.cell(row - 1, 1).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
         for col in range(2, last_col + 1):
             if col % 2 == 0:
                 tbl.cell(row - 1, col).text = ""
