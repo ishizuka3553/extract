@@ -51,7 +51,7 @@ def write_results_to_csv(results, output_path):
 
 def main():
     start = time.time()
-    results = parse_docx_tables("1-20.docx")
+    results = parse_docx_tables("北茨城・高萩区域2025.docx")
     write_results_to_csv(results, './抽出結果.txt')
     end = time.time()
     print(f"実行時間(秒):{end - start}")
