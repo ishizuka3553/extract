@@ -1,6 +1,7 @@
-import docx
 import time
+import docx
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+
 
 def parse_docx_tables(docx_path):
     doc = docx.Document(docx_path)
@@ -18,6 +19,7 @@ def parse_docx_tables(docx_path):
             if row % 2 == 1:
                 last_date(tbl, row)
     doc.save("更新後.docx")
+
 
 def last_date(tbl, row):
     last_col = 2
@@ -47,11 +49,13 @@ def last_date(tbl, row):
                 tbl.cell(row - 1, col).text = ""
             tbl.cell(row, col).text = ""      
 
+
 def main():
     start = time.time()
     parse_docx_tables("北茨城・高萩区域2025.docx")
     end = time.time()
     print(f"実行時間(秒):{end - start}")
+
 
 if __name__ == "__main__":
     main()
