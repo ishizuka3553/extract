@@ -32,7 +32,7 @@ def last_date(tbl, row):
     if last_col % 2 == 0:
         tbl.cell(row - 1, 2).text = name
         # TODO アラインメントがおかしい
-        tbl.cell(row - 1, 2).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT 
+        tbl.cell(row - 1, 2).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
         tbl.cell(row, 2).text = tbl.cell(row, last_col).text
         tbl.cell(row, 2).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
         tbl.cell(row - 1, 1).text = tbl.cell(row, last_col - 1).text
@@ -47,7 +47,7 @@ def last_date(tbl, row):
         for col in range(2, last_col + 1):
             if col % 2 == 0:
                 tbl.cell(row - 1, col).text = ""
-            tbl.cell(row, col).text = ""      
+            tbl.cell(row, col).text = ""
 
 
 def main():
