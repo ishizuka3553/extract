@@ -1,6 +1,5 @@
 import time
 import docx
-from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 
 def parse_docx_tables(docx_path):
@@ -30,24 +29,33 @@ def last_date(tbl, row):
             name = tbl.cell(row - 1, last_col).text
             break
     if last_col % 2 == 0:
-        tbl.cell(row - 1, 2).text = name
-        # TODO アラインメントがおかしい
-        tbl.cell(row - 1, 2).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
-        tbl.cell(row, 2).text = tbl.cell(row, last_col).text
-        tbl.cell(row, 2).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
-        tbl.cell(row - 1, 1).text = tbl.cell(row, last_col - 1).text
-        tbl.cell(row - 1, 1).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
+        replace(tbl.cell(row - 1, 2), tbl.cell(row - 1, 2).text, name)
+        replace(tbl.cell(row, 2), tbl.cell(row, 2).text, tbl.cell(row, last_col).text)
+        replace(
+            tbl.cell(row - 1, 1),
+            tbl.cell(row - 1, 1).text,
+            tbl.cell(row, last_col - 1).text,
+        )
         for col in range(3, last_col + 1):
             if col % 2 == 0:
                 tbl.cell(row - 1, col).text = ""
             tbl.cell(row, col).text = ""
     else:
-        tbl.cell(row - 1, 1).text = tbl.cell(row, last_col).text
-        tbl.cell(row - 1, 1).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
+        replace(
+            tbl.cell(row - 1, 1),
+            tbl.cell(row - 1, 1).text,
+            tbl.cell(row, last_col).text,
+        )
         for col in range(2, last_col + 1):
             if col % 2 == 0:
                 tbl.cell(row - 1, col).text = ""
             tbl.cell(row, col).text = ""
+
+
+def replace(cell, old, new):
+    for p in cell.paragraphs:
+        if old in p.text:
+            p.text = p.text.replace(old, new)
 
 
 def main():
